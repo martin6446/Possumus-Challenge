@@ -21,6 +21,7 @@ class PossumusServiceImp(
     override suspend fun getAlbums(): Flow<Resource<List<Album>>> = flow {
         var albums = listOf<Album>()
         try {
+            emit(Resource.Loading(true))
             albums = client.get {
                 url(Routes.ALBUMS_URL)
 
@@ -34,26 +35,31 @@ class PossumusServiceImp(
         }
 
         emit(Success(albums))
+        emit(Resource.Loading(false))
+        return@flow
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getPhotos(albumId: Int?): Flow<Resource<List<Photo>>> = flow {
         var photos = listOf<Photo>()
         try {
+            emit(Resource.Loading(true))
             photos = client.get {
                 url(Routes.PHOTOS_URL)
 
                 albumId?.let { id ->
                     parameter("albumId", id)
                 }
-                
+
                 timeout {
                     requestTimeoutMillis = 5000
                 }
             }.body()
-        } catch (exception: HttpRequestTimeoutException){
+        } catch (exception: HttpRequestTimeoutException) {
             emit(Resource.Error("timeout Error"))
         }
 
         emit(Success(photos))
+        emit(Resource.Loading(false))
+        return@flow
     }.flowOn(Dispatchers.IO)
 }

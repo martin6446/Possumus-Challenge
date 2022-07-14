@@ -42,8 +42,6 @@ class SharedViewModel(
 
     private fun getPhotosByAlbum(albumId: Int) {
         viewModelScope.launch {
-            _albumsUiState.value = AlbumsUiState(true)
-
             repository.getPhotos(albumId).collect { result ->
                 when (result) {
                     is Resource.Error -> {
@@ -59,6 +57,7 @@ class SharedViewModel(
                             }
                         )
                     }
+                    is Resource.Loading -> _albumsUiState.value = AlbumsUiState(true)
                 }
             }
         }
@@ -68,8 +67,6 @@ class SharedViewModel(
         _photosUiState.value?.let { uiState ->
             uiState.photos.ifEmpty {
                 viewModelScope.launch {
-                    _photosUiState.value = PhotosUiState(isLoading = true)
-
                     repository.getPhotos().collect { result ->
 
                         when (result) {
@@ -86,6 +83,8 @@ class SharedViewModel(
                                     }
                                 )
                             }
+                            is Resource.Loading -> _photosUiState.value =
+                                PhotosUiState(isLoading = true)
                         }
                     }
                 }
@@ -97,8 +96,6 @@ class SharedViewModel(
         _albumsUiState.value?.let { uiState ->
             uiState.albums.ifEmpty {
                 viewModelScope.launch {
-                    _albumsUiState.value = AlbumsUiState(isLoading = true)
-
                     repository.getAlbums().collect { result ->
                         when (result) {
                             is Resource.Error -> {
@@ -113,6 +110,9 @@ class SharedViewModel(
                                         AlbumsUiState(
                                             albums = albums.map { it.toModel() })
                                     })
+                            }
+                            is Resource.Loading -> {
+                                _albumsUiState.value = AlbumsUiState(isLoading = true)
                             }
                         }
                     }
