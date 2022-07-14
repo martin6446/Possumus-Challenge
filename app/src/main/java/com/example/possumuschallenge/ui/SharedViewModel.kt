@@ -13,6 +13,8 @@ import com.example.possumuschallenge.utils.Resource
 import com.example.possumuschallenge.utils.UiEvents
 import com.example.possumuschallenge.utils.toModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
@@ -57,7 +59,7 @@ class SharedViewModel(
                             }
                         )
                     }
-                    is Resource.Loading -> _albumsUiState.value = AlbumsUiState(true)
+                    is Resource.Loading -> _albumsUiState.value = AlbumsUiState(result.isLoading)
                 }
             }
         }
@@ -84,7 +86,7 @@ class SharedViewModel(
                                 )
                             }
                             is Resource.Loading -> _photosUiState.value =
-                                PhotosUiState(isLoading = true)
+                                PhotosUiState(isLoading = result.isLoading)
                         }
                     }
                 }
@@ -112,7 +114,7 @@ class SharedViewModel(
                                     })
                             }
                             is Resource.Loading -> {
-                                _albumsUiState.value = AlbumsUiState(isLoading = true)
+                                _albumsUiState.value = AlbumsUiState(isLoading = result.isLoading)
                             }
                         }
                     }

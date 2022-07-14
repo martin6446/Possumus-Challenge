@@ -34,8 +34,8 @@ class PossumusServiceImp(
             emit(Resource.Error("timeout Error"))
         }
 
-        emit(Success(albums))
         emit(Resource.Loading(false))
+        emit(Success(albums))
         return@flow
     }.flowOn(Dispatchers.IO)
 
@@ -58,8 +58,8 @@ class PossumusServiceImp(
             emit(Resource.Error("timeout Error"))
         }
 
-        emit(Success(photos))
         emit(Resource.Loading(false))
+        emit(Success(photos))
         return@flow
     }.flowOn(Dispatchers.IO)
 }

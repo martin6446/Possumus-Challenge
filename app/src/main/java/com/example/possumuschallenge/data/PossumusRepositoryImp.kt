@@ -10,8 +10,6 @@ class PossumusRepositoryImp (
     private val service: PossumusService
 ) : PossumusRepository {
     override suspend fun getAlbums(): Flow<Resource<List<Album>>> {
-        //This delay is just to show the loading feature
-        delay(500)
         return service.getAlbums()
     }
 
