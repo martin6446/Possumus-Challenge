@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/albums">
+
+    <fragment
+        android:id="@+id/albums"
+        android:name="com.example.possumuschallenge.ui.album_list_view.AlbumListFragment"
+        android:label="@string/nav_albums_id" >
+    </fragment>
+    <fragment
+        android:id="@+id/photos"
+        android:name="com.example.possumuschallenge.ui.photo_list_view.PhotoListFragment"
+        android:label="PhotoListFragment" />
+</navigation>

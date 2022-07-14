@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Possumus Challenge</string>
+    <string name="nav_albums_id">Albums</string>
+    <string name="nav_photos_id">Photos</string>
+</resources>
