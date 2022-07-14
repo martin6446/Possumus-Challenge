@@ -45,6 +45,10 @@ class PossumusServiceImp(
                 albumId?.let { id ->
                     parameter("albumId", id)
                 }
+                
+                timeout {
+                    requestTimeoutMillis = 5000
+                }
             }.body()
         } catch (exception: HttpRequestTimeoutException){
             emit(Resource.Error("timeout Error"))
