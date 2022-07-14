@@ -7,42 +7,43 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.possumuschallenge.databinding.FragmentItemListBinding
 import com.example.possumuschallenge.ui.SharedViewModel
+import com.example.possumuschallenge.ui.photo_list_view.PhotoListAdapter
 import com.example.possumuschallenge.utils.setVisibility
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class AlbumListFragment : Fragment() {
+class AlbumsPhotoList: Fragment() {
 
-    private val viewModel: SharedViewModel by sharedViewModel()
     private lateinit var binding: FragmentItemListBinding
+    private val viewModel: SharedViewModel by sharedViewModel()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentItemListBinding.inflate(layoutInflater, container, false)
+        binding = FragmentItemListBinding.inflate(inflater, container, false)
 
-        setUpView()
+        setupView()
         return binding.root
     }
 
-    private fun setUpView() {
-        viewModel.getAlbums()
-
-        val albumListAdapter = AlbumListAdapter {
-            viewModel.onAlbumsUiEvent(AlbumsUiEvent.OnAlbumSelected(it.id))
-        }
-
-
+    private fun setupView() {
+        val photoListAdapter = PhotoListAdapter()
         viewModel.albumsUiState.observe(viewLifecycleOwner) {
-            showLoading(it.isLoading)
-            albumListAdapter.submitList(it.albums)
-            binding.itemList.adapter =albumListAdapter
+            photoListAdapter.submitList(it.photosByAlbum)
+            binding.itemList.adapter = photoListAdapter
+        }
+        binding.toolbar.apply {
+            setVisibility(true)
+            setNavigationOnClickListener {
+                activity?.onBackPressed()
+                setVisibility(false)
+            }
         }
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.loadingIndicator.setVisibility(isLoading)
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.toolbar.setVisibility(false)
     }
 }
-
-

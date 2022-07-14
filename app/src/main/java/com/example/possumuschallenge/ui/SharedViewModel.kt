@@ -5,10 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.possumuschallenge.data.PossumusRepository
+import com.example.possumuschallenge.ui.album_list_view.AlbumListFragmentDirections
 import com.example.possumuschallenge.ui.album_list_view.AlbumsUiEvent
 import com.example.possumuschallenge.ui.album_list_view.AlbumsUiState
 import com.example.possumuschallenge.ui.photo_list_view.PhotosUiState
+import com.example.possumuschallenge.utils.UiEvents
 import com.example.possumuschallenge.utils.toModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 
@@ -23,8 +27,14 @@ class SharedViewModel(
     val photosUiState: LiveData<PhotosUiState>
         get() = _photosUiState
 
+    private val _uiEvents = Channel<UiEvents>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
     fun onAlbumsUiEvent(event: AlbumsUiEvent) = when (event) {
-        is AlbumsUiEvent.OnAlbumSelected -> getPhotosByAlbum(event.albumId)
+        is AlbumsUiEvent.OnAlbumSelected -> {
+            getPhotosByAlbum(event.albumId)
+            sendEvent(UiEvents.Navigate(AlbumListFragmentDirections.actionAlbumsToAlbumsPhotoList()))
+        }
 
         AlbumsUiEvent.OnBackPressed -> getAlbums()
     }
@@ -64,6 +74,12 @@ class SharedViewModel(
                     }
                 }
             }
+        }
+    }
+
+    private fun sendEvent(event: UiEvents){
+        viewModelScope.launch {
+            _uiEvents.send(event)
         }
     }
 }
