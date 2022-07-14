@@ -36,7 +36,6 @@ class PossumusServiceImp(
 
         emit(Resource.Loading(false))
         emit(Success(albums))
-        return@flow
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getPhotos(albumId: Int?): Flow<Resource<List<Photo>>> = flow {
@@ -60,6 +59,5 @@ class PossumusServiceImp(
 
         emit(Resource.Loading(false))
         emit(Success(photos))
-        return@flow
     }.flowOn(Dispatchers.IO)
 }
