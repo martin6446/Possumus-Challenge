@@ -32,7 +32,6 @@ class AlbumListFragment : Fragment() {
             viewModel.onAlbumsUiEvent(AlbumsUiEvent.OnAlbumSelected(it.id))
         }
 
-
         viewModel.albumsUiState.observe(viewLifecycleOwner) {
             showLoading(it.isLoading)
             albumListAdapter.submitList(it.albums)

@@ -1,4 +1,4 @@
-package com.example.possumuschallenge.ui.album_list_view
+package com.example.possumuschallenge.ui.photo_list_view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.possumuschallenge.databinding.FragmentItemListBinding
 import com.example.possumuschallenge.ui.SharedViewModel
-import com.example.possumuschallenge.ui.photo_list_view.PhotoListAdapter
 import com.example.possumuschallenge.utils.setVisibility
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
-class AlbumsPhotoList: Fragment() {
+class PhotosByAlbum: Fragment() {
 
     private lateinit var binding: FragmentItemListBinding
     private val viewModel: SharedViewModel by sharedViewModel()
@@ -37,7 +36,6 @@ class AlbumsPhotoList: Fragment() {
             setVisibility(true)
             setNavigationOnClickListener {
                 activity?.onBackPressed()
-                setVisibility(false)
             }
         }
     }

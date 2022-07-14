@@ -35,6 +35,7 @@ class PhotoListFragment : Fragment() {
 
             adapter.submitList(it.photos)
         }
+        binding.itemList.animate()
         binding.itemList.adapter = adapter
     }
 

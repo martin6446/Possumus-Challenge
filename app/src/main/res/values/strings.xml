@@ -2,4 +2,6 @@
     <string name="app_name">Possumus Challenge</string>
     <string name="nav_albums_id">Albums</string>
     <string name="nav_photos_id">Photos</string>
+    <string name="thumbnail_content_description">thumbnail</string>
+    <string name="mainImage_content_description">mainImage</string>
 </resources>

@@ -18,6 +18,6 @@
         android:label="PhotoListFragment" />
     <fragment
         android:id="@+id/albumsPhotoList"
-        android:name="com.example.possumuschallenge.ui.album_list_view.AlbumsPhotoList"
+        android:name="com.example.possumuschallenge.ui.photo_list_view.PhotosByAlbum"
         android:label="AlbumsPhotoList" />
 </navigation>
