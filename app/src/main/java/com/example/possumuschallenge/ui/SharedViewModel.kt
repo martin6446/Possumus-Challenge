@@ -9,6 +9,7 @@ import com.example.possumuschallenge.ui.album_list_view.AlbumListFragmentDirecti
 import com.example.possumuschallenge.ui.album_list_view.AlbumsUiEvent
 import com.example.possumuschallenge.ui.album_list_view.AlbumsUiState
 import com.example.possumuschallenge.ui.photo_list_view.PhotosUiState
+import com.example.possumuschallenge.utils.Resource
 import com.example.possumuschallenge.utils.UiEvents
 import com.example.possumuschallenge.utils.toModel
 import kotlinx.coroutines.channels.Channel
@@ -43,8 +44,22 @@ class SharedViewModel(
         viewModelScope.launch {
             _albumsUiState.value = AlbumsUiState(true)
 
-            repository.getPhotos(albumId).collect { photos ->
-                _albumsUiState.postValue(AlbumsUiState(photosByAlbum = photos.map { it.toModel() }))
+            repository.getPhotos(albumId).collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        sendEvent(
+                            UiEvents.ShowSnackBar {
+                                getPhotosByAlbum(albumId)
+                            })
+                    }
+                    is Resource.Success -> {
+                        _albumsUiState.postValue(
+                            result.data?.let { photos ->
+                                AlbumsUiState(photosByAlbum = photos.map { it.toModel() })
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -55,8 +70,23 @@ class SharedViewModel(
                 viewModelScope.launch {
                     _photosUiState.value = PhotosUiState(isLoading = true)
 
-                    repository.getPhotos().collect { photoList ->
-                        _photosUiState.postValue(PhotosUiState(photos = photoList.map { it.toModel() }))
+                    repository.getPhotos().collect { result ->
+
+                        when (result) {
+                            is Resource.Error -> {
+                                sendEvent(
+                                    UiEvents.ShowSnackBar {
+                                        getPhotos()
+                                    })
+                            }
+                            is Resource.Success -> {
+                                _photosUiState.postValue(
+                                    result.data?.let { photos ->
+                                        PhotosUiState(photos = photos.map { it.toModel() })
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -69,15 +99,29 @@ class SharedViewModel(
                 viewModelScope.launch {
                     _albumsUiState.value = AlbumsUiState(isLoading = true)
 
-                    repository.getAlbums().collect { albumList ->
-                        _albumsUiState.postValue(AlbumsUiState(albums = albumList.map { it.toModel() }))
+                    repository.getAlbums().collect { result ->
+                        when (result) {
+                            is Resource.Error -> {
+                                sendEvent(
+                                    UiEvents.ShowSnackBar {
+                                        getAlbums()
+                                    })
+                            }
+                            is Resource.Success -> {
+                                _albumsUiState.postValue(
+                                    result.data?.let { albums ->
+                                        AlbumsUiState(
+                                            albums = albums.map { it.toModel() })
+                                    })
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun sendEvent(event: UiEvents){
+    private fun sendEvent(event: UiEvents) {
         viewModelScope.launch {
             _uiEvents.send(event)
         }

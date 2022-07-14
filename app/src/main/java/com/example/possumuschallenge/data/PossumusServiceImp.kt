@@ -3,36 +3,53 @@ package com.example.possumuschallenge.data
 import com.example.possumuschallenge.data.dto.Album
 import com.example.possumuschallenge.data.dto.Photo
 import com.example.possumuschallenge.data.routes.Routes
+import com.example.possumuschallenge.utils.Resource
+import com.example.possumuschallenge.utils.Resource.Success
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.launchIn
 
 class PossumusServiceImp(
     private val client: HttpClient
 ) : PossumusService {
 
-    override suspend fun getAlbums(): Flow<List<Album>> = flow {
-        val albums: List<Album> = client.get {
-            url(Routes.ALBUMS_URL)
-        }.body()
+    override suspend fun getAlbums(): Flow<Resource<List<Album>>> = flow {
+        var albums = listOf<Album>()
+        try {
+            albums = client.get {
+                url(Routes.ALBUMS_URL)
 
-        emit(albums)
+                timeout {
+                    requestTimeoutMillis = 5000
+                }
+            }.body()
+
+        } catch (exception: HttpRequestTimeoutException) {
+            emit(Resource.Error("timeout Error"))
+        }
+
+        emit(Success(albums))
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getPhotos(albumId: Int?): Flow<List<Photo>> = flow{
-        val photos: List<Photo> = client.get {
-            url(Routes.PHOTOS_URL)
+    override suspend fun getPhotos(albumId: Int?): Flow<Resource<List<Photo>>> = flow {
+        var photos = listOf<Photo>()
+        try {
+            photos = client.get {
+                url(Routes.PHOTOS_URL)
 
-            albumId?.let { id ->
-                parameter("albumId",id)
-            }
-        }.body()
+                albumId?.let { id ->
+                    parameter("albumId", id)
+                }
+            }.body()
+        } catch (exception: HttpRequestTimeoutException){
+            emit(Resource.Error("timeout Error"))
+        }
 
-        emit(photos)
+        emit(Success(photos))
     }.flowOn(Dispatchers.IO)
 }

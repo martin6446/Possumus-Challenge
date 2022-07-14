@@ -7,6 +7,7 @@ import com.example.possumuschallenge.data.PossumusServiceImp
 import com.example.possumuschallenge.ui.SharedViewModel
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
@@ -35,5 +36,6 @@ fun provideKtorClient(): HttpClient {
         install(Logging) {
             level = LogLevel.INFO
         }
+        install(HttpTimeout)
     }
 }
